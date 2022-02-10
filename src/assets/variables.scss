@@ -3,11 +3,9 @@ $primary-light: findLightColor($primary);
 $primary-dark: findDarkColor($primary);
 $primary-invert: findColorInvert($primary);
 
-// Lists and maps
 $custom-colors: null !default;
 $custom-shades: null !default;
 
-// Setup $colors to use as bulma classes (e.g. 'is-twitter')
 $colors: mergeColorMaps(
                 (
                         "white": (
@@ -72,7 +70,6 @@ $colors: mergeColorMaps(
                 $custom-colors
 );
 
-// Links
 $link: $primary;
 $link-invert: $primary-invert;
 $link-focus-border: $primary;
