@@ -12,7 +12,6 @@ const routes = [
   },
   {
     path: '/home',
-    name: 'Home',
     component: require('@/views/home').default,
     meta: {
       authRequired: true,
@@ -21,7 +20,6 @@ const routes = [
   },
   {
     path: '/signin',
-    name: 'Sign in',
     component: require('@/views/signin').default,
     meta: {
       authRequired: false,

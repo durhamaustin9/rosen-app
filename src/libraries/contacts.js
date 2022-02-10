@@ -1,21 +1,10 @@
-import axios from 'axios'
-
 const http = require('@/middleware/axios').default
 
 export default {
   doGetContacts: async function () {
     return new Promise((resolve, reject) => {
-      http.get('/contact/', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).then(response => {
+      http.get('contact').then(response => {
         resolve(response)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-  doGetLatLong: async function (location) {
-    return new Promise((resolve, reject) => {
-      axios.get('http://www.mapquestapi.com/geocoding/v1/address', { params: { key: 'MderQFkJDZSlcpLFtVdXAC2UniZTbiUN', location: location } }).then(response => {
-        resolve(response.data.results.shift().locations.shift())
       }).catch(error => {
         reject(error)
       })
@@ -23,7 +12,7 @@ export default {
   },
   doGetContact: async function (value) {
     return new Promise((resolve, reject) => {
-      http.get('/contact/' + value, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).then(response => {
+      http.get('contact/' + value).then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)
@@ -32,7 +21,7 @@ export default {
   },
   doUpdateContact: async function (value) {
     return new Promise((resolve, reject) => {
-      http.put('/contact/update/' + value.id, value, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).then(_ => {
+      http.put('contact/update/' + value.id, value).then(_ => {
         resolve()
       }).catch(error => {
         reject(error)
@@ -41,7 +30,7 @@ export default {
   },
   doDeleteContact: async function (value) {
     return new Promise((resolve, reject) => {
-      http.delete('contact/delete/' + value, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).then(_ => {
+      http.delete('contact/delete/' + value).then(_ => {
         resolve()
       }).catch(error => {
         reject(error)
@@ -50,7 +39,7 @@ export default {
   },
   doCreateContact: async function (value) {
     return new Promise((resolve, reject) => {
-      http.post('contact/create', value, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).then(_ => {
+      http.post('contact/create/', value).then(_ => {
         resolve()
       }).catch(error => {
         reject(error)

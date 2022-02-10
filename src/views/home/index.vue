@@ -2,48 +2,53 @@
   <section>
     <b-loading :is-full-page="true" v-model="loading" :can-cancel="false"></b-loading>
     <div class="columns">
-      <b-tabs class="ml-2 column is-one-third customClass" size="is-medium" vertical v-model="activeTab" :animated="false" type="is-boxed" v-if="(!loading)" >
-        <b-tab-item :label="`${contact.firstName} ${contact.lastName}`" v-for="contact in contacts" :key="contact.id">
+      <b-tabs class="ml-2 column customClass" size="is-medium" vertical v-model="activeTab" :animated="false" type="is-boxed" v-if="this.contacts.length !== 0">
+        <b-tab-item :label="`${contact.firstName} ${contact.lastName}`" v-for="contact in contacts" :key="contact.id" style="height: 76.5%; margin-top: 1.5rem">
           <div>
             <div class="card-container">
-              <div class="card">
-                <div class="card-content has-text-left">
-                  <div class="card-subtext">
-                    <h1>Name</h1>
-                    <p>{{ contact.firstName + " " + contact.lastName }}</p>
+              <div class="card is-flex columns">
+                <div class="has-text-left column is-half m-3">
+                  <div class="card-subtext mb-4">
+                    <p class="title is-5">Name</p>
+                    <p class="subtitle is-6 pt-1">{{ contact.firstName + " " + contact.lastName }}</p>
                   </div>
-                  <div class="card-subtext">
-                    <h1>Phone</h1>
-                    <p>{{ contact.phone }}</p>
+                  <div class="card-subtext mb-4">
+                    <p class="title is-5">Phone</p>
+                    <p class="subtitle is-6 pt-1">{{ contact.phone }}</p>
                   </div>
-                  <div class="card-subtext">
-                    <h1>Email</h1>
-                    <p>{{ contact.email }}</p>
+                  <div class="card-subtext mb-4">
+                    <p class="title is-5">Email</p>
+                    <p class="subtitle is-6 pt-1">{{ contact.email }}</p>
                   </div>
-                  <div class="card-subtext">
-                    <h1>Address</h1>
-                    <p>{{ contact.streetAddress + " " + contact.zip }}</p>
+                  <div class="card-subtext mb-4">
+                    <p class="title is-5">Address</p>
+                    <p class="subtitle is-6 pt-1 mb-0">{{ contact.streetAddress }}</p>
+                    <p class="subtitle is-6">{{ contact.city + " " + contact.state + " " + contact.zip }}</p>
                   </div>
-                  <div class="card-subtext">
-                    <h1>Notes</h1>
-                    <p>{{ contact.notes }}</p>
+                  <div class="card-subtext mb-4">
+                    <p class="title is-5">Notes</p>
+                    <p class="subtitle is-6 pt-1">{{ contact.notes }}</p>
                   </div>
                 </div>
-                <div class="card-button-container">
-                  <b-button class="mb-2" @click="updateContact(contact.id)" type="is-primary">Update Contact</b-button>
-                  <b-button class="mb-2" @click="deleteContact(contact.id)" type="is-primary">Delete Contact</b-button>
+                <div class="card-button-container column">
+                  <div class="columns is-mobile ml-auto">
+                    <span class="column mt-auto ml-auto mb-2"><b-button class="" @click="updateContact(contact.id)" type="is-primary" icon-right="pen-clip">Update</b-button></span>
+                    <span class="column mt-auto mb-2 pl-0 pr-0"><b-button class="" @click="deleteContact(contact.id)" type="is-danger" icon-right="trash-can"></b-button></span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </b-tab-item>
       </b-tabs>
+      <div class="column" v-else>No Contacts</div>
       <div style="display: contents" class="column">
         <Map ref="map" class="mr-1"></Map>
       </div>
     </div>
-    <update-contact ref="updateContact"></update-contact>
+    <update-contact ref="updateContact"/>
     <create-contact/>
+    <confirm-delete ref="confirmDelete"/>
   </section>
 </template>
 
@@ -51,9 +56,10 @@
 const Map = require('@/views/components/map').default
 const updateContact = require('@/views/components/updateContact').default
 const createContact = require('@/views/components/createContact').default
+const confirmDelete = require('@/views/components/confirmDelete').default
 
 export default {
-  components: { Map, updateContact, createContact },
+  components: { Map, updateContact, createContact, confirmDelete },
   data: () => ({
     loading: false,
     contacts: [],
@@ -63,26 +69,15 @@ export default {
     getContacts () {
       this.loading = true
       this.$libraries.contacts.doGetContacts().then(success => {
-        if (success.data.message === 'No Contacts') {
-          this.contacts = []
-        } else {
-          this.contacts = success.data
-        }
-        this.panToAddress()
-      }).catch(_ => {
-        if (this.contacts.length === 1) {
-          this.$buefy.toast.open({
-            type: 'is-info',
-            message: 'No Contacts',
-            duration: 3000
-          })
-        } else {
-          this.$buefy.toast.open({
-            type: 'is-danger',
-            message: 'Failed to load contacts',
-            duration: 3000
-          })
-        }
+        this.contacts = success.data
+        this.flyToAddress()
+      }).catch(error => {
+        console.log(error)
+        this.$buefy.toast.open({
+          type: 'is-danger',
+          message: 'Failed to load contacts',
+          duration: 3000
+        })
       }).finally(_ => {
         this.loading = false
       })
@@ -91,24 +86,12 @@ export default {
       this.$refs.updateContact.doOpen(contactId)
     },
     deleteContact (contactId) {
-      this.$libraries.contacts.doDeleteContact(contactId).then(success => {
-        this.$buefy.toast.open({
-          type: 'is-success',
-          message: 'Contact deleted',
-          duration: 3000
-        })
-
-        this.getContacts()
-      }).catch(_ => {
-        this.$buefy.toast.open({
-          type: 'is-danger',
-          message: 'Failed to delete contact',
-          duration: 3000
-        })
-      })
+      this.$refs.confirmDelete.doOpen(contactId)
     },
-    panToAddress () {
-      this.$refs.map.panToAddress(this.contacts[this.activeTab].streetAddress)
+    flyToAddress () {
+      if (this.contacts[this.activeTab] !== undefined) {
+        this.$refs.map.flyToAddress(this.contacts[this.activeTab].streetAddress + ' ' + this.contacts[this.activeTab].city + ' ' + this.contacts[this.activeTab].state + ' ' + this.contacts[this.activeTab].zip)
+      }
     }
   },
   mounted () {
@@ -121,54 +104,8 @@ export default {
   },
   watch: {
     activeTab: function () {
-      this.panToAddress()
+      this.flyToAddress()
     }
   }
 }
-
 </script>
-
-<style lang="scss" scoped >
-  .card-container {
-    display: grid
-  }
-  .card{
-    display: grid;
-    margin-top: 18%;
-    margin-bottom: auto;
-    height: max-content
-  }
-  .card-content {
-    margin: auto
-  }
-  .card-subtext h1 {
-    font-weight: bold
-  }
-  .card-button {
-  }
-  .card-button-container {
-    display: grid
-  }
-  .button {
-    margin: auto
-  }
-  .b-tabs {
-    height: 100%;
-    padding: 0;
-    display: contents !important
-  }
-  .hidden {
-    transform: translateY(-200%)
-  }
-  .container {
-    margin: 0 !important;
-    max-width: 100% !important;
-    display: grid;
-    height: 100%
-  }
-  .columns {
-    height: 100vh;
-    min-height: 480px;
-    margin: 0
-  }
-</style>

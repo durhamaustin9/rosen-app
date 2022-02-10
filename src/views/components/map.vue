@@ -1,6 +1,5 @@
 <template>
-<!--  in line style here - remove and set to style scoped-->
-  <section class="ml-auto mr-auto mb-auto mt-5">
+  <section class="ml-auto mr-auto mb-auto mt-5 map-container">
     <b-loading :is-full-page="false" v-model="loading" :can-cancel="false"></b-loading>
     <div id="map"></div>
   </section>
@@ -42,17 +41,23 @@ export default {
       this.markers = new L1.MarkerClusterGroup()
       this.map.addLayer(this.markers)
     },
-    panToAddress: function (address) {
+    flyToAddress: function (address) {
       this.loading = true
-      this.$libraries.contacts.doGetLatLong(address).then(success => {
+      this.$libraries.map.doGetLatLong(address).then(success => {
         this.markers.clearLayers()
 
-        this.lat = success.latLng.lat
-        this.lng = success.latLng.lng
+        this.lat = success.lat
+        this.lng = success.lng
 
-        this.markers.addLayer(L.marker([this.lat, this.lng]))
+        const marker = L.marker([this.lat, this.lng])
 
-        this.map.panTo([this.lat, this.lng], 10)
+        this.markers.addLayer(marker)
+
+        marker.on('add', function () {
+          marker.bindPopup(address).openPopup()
+        })
+
+        this.map.flyTo([this.lat, this.lng], 15)
       }).catch(_ => {
         this.$buefy.toast.open({
           type: 'is-danger',
@@ -69,16 +74,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  section {
-    height: 75%;
-    width: 50%;
-    position: sticky
-  }
-  #map {
-    height: 100%;
-    width: 100%;
-    position: relative !important;
-  }
-</style>

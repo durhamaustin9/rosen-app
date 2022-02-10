@@ -1,0 +1,128 @@
+@import "~bulma/sass/utilities/_all";
+@import "variables";
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+.card-container {
+  display: grid
+}
+
+.modal-card {
+  width: 30em!important;
+}
+
+.card {
+  display: grid;
+  margin-bottom: auto;
+  height: max-content;
+  min-width: 550px;
+  max-width: 600px;
+  max-height: 550px;
+}
+
+.map-container {
+  margin: auto;
+  height: 75%;
+  width: 50%;
+  position: sticky;
+  min-width: 310px;
+  min-height: 480px;
+  max-height: 550px;
+}
+
+.card-content {
+  margin: auto
+}
+
+.card-subtext h1 {
+  margin-bottom: 0 !important;
+}
+
+.card-button-container {
+  display: grid
+}
+
+.button {
+  margin: auto
+}
+
+.b-tabs {
+  height: 100%;
+  padding: 0;
+  display: contents !important
+}
+
+.hidden {
+  transform: translateY(-200%)
+}
+
+.container {
+  margin: 0 !important;
+  max-width: 100% !important;
+  display: grid;
+  height: 100%
+}
+
+.columns {
+  min-height: 480px;
+  margin: 0
+}
+
+.hidden {
+  display: none;
+}
+
+body, html {
+  overflow-x: scroll;
+  min-width: 490px;
+  height: 100%;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  height: 100%
+}
+
+#nav {
+  padding: 30px;
+}
+
+a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.tab-content {
+  padding-top: 0 !important;
+}
+
+.modal-close {
+  display: none !important;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  position: relative !important;
+}
+
+.navbar-end {
+  margin-right: .5rem !important;
+}
+
+.section {
+  height: 100%;
+  min-width: 100%;
+  display: flex;
+}
+
+.signInContainer {
+  margin: auto;
+  background-color: whitesmoke;
+  padding: 20px;
+  box-shadow: 0 0 30px
+}

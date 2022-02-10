@@ -1,6 +1,6 @@
 <template>
   <section>
-    <b-loading :is-full-page="true" v-model="loading" :can-cancel="false" ></b-loading>
+    <b-loading :is-full-page="true" v-model="loading" :can-cancel="false"></b-loading>
 
     <b-modal :active="open" has-modal-card trap-focus :can-cancel="false">
       <div class="modal-card p4 has-text-left" style="padding: 20px">
@@ -17,7 +17,7 @@
           <b-field label="Password" class="mt-1">
             <b-input v-model="user.password" type="password" password-reveal></b-input>
           </b-field>
-          <b-button @click="doClose()" class="mr-1" type="is-info">Close</b-button>
+          <b-button @click="doClose()" class="mr-1" type="is-primary">Close</b-button>
           <b-button v-on:click="registerUser()" class="ml-1" type="is-success">Sign Up</b-button>
         </section>
       </div>
@@ -35,7 +35,6 @@ export default {
       lastName: null,
       email: null,
       password: null
-
     }
   }),
   methods: {
@@ -70,7 +69,3 @@ export default {
   }
 }
 </script>
-
-<style scoped >
-.modal-card { width: 30em!important; }
-</style>
